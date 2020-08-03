@@ -59,28 +59,23 @@ public:
     int numberOfArithmeticSlices(vector<int> &A)
     {
         int n = A.size();
-        if (A.size() <= 1)
-            return A.size();
+        if (A.size() <= 2)
+            return 0;
 
-        vector<unordered_map<int, int>> dp(n);
-        int ans = 1;
-        for (int i = 1; i < A.size(); i++)
+        vector<int> dp(n, 0);
+        dp[0] = 0;
+        dp[1] = 0;
+        dp[2] = (A[2] - A[1] == A[1] - A[0]) ? 1 : 0;
+        int ans = dp[2];
+
+        for (int i = 3; i < n; i++)
         {
-            for (int j = 0; j < i; j++)
-            {
-                int cd = A[i] - A[j];
-                if (dp[j].find(cd) == dp[j].end())
-                {
-                    dp[i][cd] = 2;
-                }
-                else
-                {
-                    dp[i][cd] = dp[j][cd] + 1;
-                }
-                cout << dp[i][cd] << endl;
-                ans = max(ans, dp[i][cd]);
-            }
+            if (A[i] - A[i - 1] == A[i - 1] - A[i - 2])
+                dp[i] = dp[i - 1] + 1;
+
+            ans += dp[i];
         }
+
         return ans;
     }
 };

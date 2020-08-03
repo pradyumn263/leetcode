@@ -62,11 +62,70 @@
  */
 
 // @lc code=start
-class Solution {
+class Solution
+{
 public:
-    bool canCross(vector<int>& stones) {
-        
+    int bsearch(vector<int> &stones, int key, int startIndex)
+    {
+        int n = stones.size();
+        int lo = startIndex;
+        int hi = n - 1;
+
+        while (lo < hi)
+        {
+            int mid = lo + (hi - lo) / 2;
+            if (stones[mid] >= key)
+            {
+                hi = mid;
+            }
+            else
+            {
+                lo = mid + 1;
+            }
+        }
+
+        if (lo < n && stones[lo] == key)
+            return lo;
+        return -1;
+    }
+
+    bool helper(vector<int> &stones, int startInd, int k, vector<vector<int>> &dp)
+    {
+
+        if (startInd == stones.size() - 1)
+            return true;
+
+        if (startInd == -1)
+            return false;
+
+        if (dp[startInd][k] != 2)
+            return dp[startInd][k];
+
+        bool ans = false;
+        if (k - 1 > 0)
+        {
+            int j = bsearch(stones, stones[startInd] + k - 1, startInd + 1);
+            ans = helper(stones, j, k - 1, dp);
+        }
+
+        if (k > 0)
+        {
+            int j = bsearch(stones, stones[startInd] + k, startInd + 1);
+            ans = ans || helper(stones, j, k, dp);
+        }
+
+        int j = bsearch(stones, stones[startInd] + k + 1, startInd + 1);
+        ans = ans || helper(stones, j, k + 1, dp);
+
+        dp[startInd][k] = (int)ans;
+        return ans;
+    }
+
+    bool canCross(vector<int> &stones)
+    {
+        int n = stones.size();
+        vector<vector<int>> dp(n, vector<int>(n + 1, 2));
+        return helper(stones, 0, 0, dp);
     }
 };
 // @lc code=end
-
